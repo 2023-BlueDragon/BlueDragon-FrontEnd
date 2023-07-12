@@ -22,7 +22,7 @@ export const TitleImg = styled.img`
 `
 
 export const InputBox = styled.div`
-    display: block;
+    margin-top: 2.5rem; 
 `
 
 export const InputLabel = styled.p`
@@ -42,7 +42,7 @@ export const Input = styled.input`
     border: 1px solid;
     padding-left: 1.25rem;
 
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     
     ::placeholder{
         color: rgba(128, 128, 128, 0.50);
