@@ -134,6 +134,8 @@ export const SignInBtn = styled.button`
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration-line: underline;
+
+    cursor: pointer;
 `
 
 
