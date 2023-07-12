@@ -4,15 +4,113 @@ import SearchIconImg from "../../asset/search.svg"
 import UserImg from "../../asset/profile.svg"
 import QuestionIconImg from "../../asset/question.svg"
 import AnswerIconImg from "../../asset/answer.svg"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Answer from "./Answer"
+import { useNavigate, useParams } from "react-router"
+import API from "../../utils/API"
 
 const Detail = () => {
-    const [isPostAnswerClicked, setIsPostAnswerClicked] = useState(true)
+    const navigater = useNavigate()
+
+    const [isPostAnswerClicked, setIsPostAnswerClicked] = useState(false)
+    const [isLodding, setIsLodding] = useState(true)
+
+    const {detailId} = useParams()
+    const nickName = localStorage.getItem("nickName")
+
+    const [fileUrl , setFileUrl] = useState("")
+    const [question,setQuestion] = useState()
+    const [answers, setAnswers] = useState([])
+    const [fileName, setFileName] = useState("")
+
+    const [answerContent, setAnswerContent] = useState()
+    
+    useEffect(()=>{
+        API.get(`/question/${detailId}`,{
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }})
+        .then((res)=>{
+            setQuestion(res.data)
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
+
+        API.get(`/answer/list/question/${detailId}`,{
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }})
+        .then((res)=>{
+            setAnswers(res.data)
+            setIsLodding(false)
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
+    },[])
+
+    const ChooseFileEvent = (e) => {
+        const formData = new FormData();
+        formData.append("fileList",e.target.files[0])
+
+        // for (const key of formData.keys()) {
+        //     console.log(key);
+        //   }
+        //   // FormData의 value 확인
+        //   // @ts-ignore
+        //   for (const value of formData.values()) {
+        //     console.log(value);
+        //   }
+        //   console.log(formData);
+
+        API.post(`/file/list`,formData,{
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((res)=>{
+            setFileUrl(res.data)
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
+
+        for (const value of formData.values()) {
+            setFileName(value.name);
+        }
+    }
+
+    const SubmitAnswerEvent = () => {
+        console.log(fileUrl)
+        API.post(`/answer`,{
+            "answer" : answerContent,
+            "questionId" : detailId,
+            "fileUrlList" : fileUrl
+        },{
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
+        })
+        .then((res)=>{
+            alert("등록되었습니다.")
+            window.location.reload();
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
+    }
+
+    if(isLodding){
+        return(
+            <h1>로딩중입니다!!</h1>
+        )
+    }
 
     return(
         <S.DetailLayout>
-            <S.TitleLogo src={LogoImg}/>
+            <S.TitleLogo src={LogoImg} onClick={()=>{navigater('/')}}/>
 
             <S.SearchBackBox>
                 <S.SearchBox>
@@ -21,7 +119,7 @@ const Detail = () => {
                 </S.SearchBox>
 
                 <S.UserBox>
-                    <S.UserName>조류 전문가</S.UserName>
+                    <S.UserName>{nickName}</S.UserName>
                     <S.UserImg src={UserImg}/>
                 </S.UserBox>
             </S.SearchBackBox>
@@ -30,21 +128,13 @@ const Detail = () => {
                 <S.DetailContentBox>
                     <S.TopInfoBox>
                         <S.QuestionImg src={QuestionIconImg}/>
-                        <S.Title>저희 새가 이상해요ㅠㅠ</S.Title>
+                        <S.Title>{question.title}</S.Title>
                     </S.TopInfoBox>
-                    <S.DetailContentText>
-안녕하세요.. 저는 파랑새를 키운지 한달 정도 된 조류 집사인데요..<br/>
-얘가 집에 잘 적응하나 싶더니.. 제가 학교 간 사이에  직접 새장 문을 열고
-나와서 집안에 물건들을 다 쪼아놓더라고요...<br/>
-<br/>
-저희 새가 왜 그런지 알 수 있을까요?
-새들도 사춘기가 있는건가요??
-                    </S.DetailContentText>
+                    <S.DetailContentText>{question.content}</S.DetailContentText>
 
-                    <S.DetailWriterInfoBox>
-                        <S.DetailWriterImg src={UserImg}/>
-                        <S.DetailWriterName>blue bird</S.DetailWriterName>
-                        <S.DetailWriteTime>2023. 07. 13</S.DetailWriteTime>
+                    <S.DetailWriterInfoBox>                        <S.DetailWriterImg src={UserImg}/>
+                        <S.DetailWriterName>{question.writer.nickName}</S.DetailWriterName>
+                        <S.DetailWriteTime>{question.createdAt}</S.DetailWriteTime>
                     </S.DetailWriterInfoBox>
 
                 </S.DetailContentBox>
@@ -53,32 +143,33 @@ const Detail = () => {
             <S.AnswerContentBox>
                 <S.TopInfoBox>
                     <S.AnswerImg src={AnswerIconImg}/>
-                    <S.Title>0개</S.Title>
+                    <S.Title>{answers.length}개</S.Title>
                 </S.TopInfoBox>
 
                 <S.AnsweringHeaderBox>
                     <S.AnsweringHeaderUserBox>
                         <S.UserImg src={UserImg}/>
-                        <S.AnsweringHeaderLabel>조류전문가님, 답변해주세요!</S.AnsweringHeaderLabel>
+                        <S.AnsweringHeaderLabel>{nickName}님, 답변해주세요!</S.AnsweringHeaderLabel>
                     </S.AnsweringHeaderUserBox>
 
-                    <S.PostAnswerBtn>답변하기</S.PostAnswerBtn>
+                    <S.PostAnswerBtn onClick={()=>{setIsPostAnswerClicked(!isPostAnswerClicked)}}>답변하기</S.PostAnswerBtn>
                 </S.AnsweringHeaderBox>
 
                 {
                     isPostAnswerClicked && 
                     <S.PostAnswerBox>
-                        <S.AnswerTextarea type="textarea" placeholder="답변을 적어주세요"/>
+                        <S.AnswerTextarea type="textarea" placeholder="답변을 적어주세요" value={answerContent} onChange={(e)=>{setAnswerContent(e.target.value)}}/>
 
                         <S.AnswerBtnRow>
-                            <S.ChooseFileLabel for="AnswerFile" >파일선택</S.ChooseFileLabel>
-                            <S.ChooseFile type="file" id="AnswerFile"/>
-                            <S.SubmitAnswer>답변등록</S.SubmitAnswer>
+                            <S.ChooseFileLabel for="AnswerFile">파일선택</S.ChooseFileLabel>
+                            <S.ChooseFile type="file" id="AnswerFile" onChange={(e)=>{ChooseFileEvent(e)}}/>
+                            <S.FileName placeholder="파일 선택" value={fileName}/>
+                            <S.SubmitAnswer onClick={SubmitAnswerEvent}>답변등록</S.SubmitAnswer>
                         </S.AnswerBtnRow>
                     </S.PostAnswerBox>
                 }
 
-                <Answer></Answer>
+                <Answer detailId={detailId} answers={answers}></Answer>
 
 
             </S.AnswerContentBox>

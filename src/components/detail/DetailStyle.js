@@ -258,6 +258,11 @@ export const ChooseFile = styled.input`
     height: 0;
 `
 
+export const FileName = styled.input`
+    border: none;
+    background: none;
+`
+
 export const SubmitAnswer = styled.button`
     width: 6.25rem;
     height: 2.5rem;

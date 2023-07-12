@@ -30,6 +30,8 @@ export const InputRow = styled.div`
 export const InputBox = styled.div``
 
 export const InputLabel = styled.p`
+    margin-bottom: 0.6rem;
+
     display: flex;
     justify-content: start;
 
@@ -39,7 +41,7 @@ export const InputLabel = styled.p`
 `
 
 export const Input = styled.input`
-    width: calc(30rem - 1.25rem);
+    width: 30rem;
     height: 4.375rem;
 
     border-radius: 15px;
@@ -118,6 +120,8 @@ export const SubmitBtn = styled.button`
 `
 
 export const DirectionBox = styled.div`
+    margin-top: 0.6rem;
+
     display: flex;
 
 `
@@ -128,6 +132,8 @@ export const isAccountLabel = styled.p`
 `   
 
 export const SignInBtn = styled.button`
+    margin-left: 0.6rem;
+
     border: none;
     background-color: #fff;
     color: #2D47E5;

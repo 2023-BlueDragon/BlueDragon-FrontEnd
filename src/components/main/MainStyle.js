@@ -32,7 +32,7 @@ export const SearchBackBox = styled.div`
 `
 
 export const SearchBox = styled.div`
-    width: 62.5rem;
+    width: 50vw;
     height: 4.375rem;
 
     border: none;
@@ -78,6 +78,11 @@ export const UserBox = styled.div`
     right: 8.5rem;
 
     display: flex;
+    align-items: center;
+`
+
+export const isNotLoginBox = styled.div`
+    display: flex;
 `
 
 export const UserName = styled.p`
@@ -109,6 +114,8 @@ export const ArrowImg = styled.img`
     height: 3.125rem;
     
     ${(props) => (props.direction==="right" ? "transform: rotate(180deg)" : "")};
+
+    cursor: pointer;
 `
 
 export const PostsBox = styled.div`
@@ -156,4 +163,6 @@ export const PostContextText = styled.div`
     color: #2F2F32;
     font-size: 0.75rem;
     font-weight: 400;
+
+    overflow: hidden;
 `

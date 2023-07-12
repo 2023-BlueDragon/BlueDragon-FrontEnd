@@ -12,6 +12,30 @@ const SignUp = () => {
     const [name,setName] = useState();
     const [nick,setNick] = useState();
     const [major,setMajor] = useState();
+    const [fileUrl , setFileUrl] = useState("")
+    const [fileName, setFileName] = useState("")
+
+    const ChooseFileEvent = (e) => {
+        const formData = new FormData();
+        formData.append("fileList",e.target.files[0])
+
+        API.post(`/file/list`,formData,{
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                "Content-Type": "multipart/form-data",
+            },
+        })
+        .then((res)=>{
+            setFileUrl(res.data)
+        })
+        .catch((err)=>{
+            console.error(err)
+        })
+
+        for (const value of formData.values()) {
+            setFileName(value.name);
+        }
+    }
 
     const Submit = () => {
         const data = {
@@ -19,12 +43,14 @@ const SignUp = () => {
             "passWord": pw,
             "name": name,
             "nickName": nick,
-            "major": major
+            "major": major,
+            "fileUrlList" : fileUrl
         }
 
         API.post('/user/expert',data)
             .then((res)=>{
                 console.log(res)
+                navigater('/signIn')
             })
             .catch((err)=>{
                 console.error(err)
@@ -34,7 +60,7 @@ const SignUp = () => {
     return(
         <S.SignUpLayout>
             <S.ContentBox>
-                <S.TitleImg src={LogoImg}/>
+                <S.TitleImg src={LogoImg} onClick={(e)=>{navigater('/')}}/>
 
                 <S.InputRow>
                     <S.InputBox>
@@ -70,11 +96,11 @@ const SignUp = () => {
                         <S.InputLabel>졸업 증명서</S.InputLabel>
                         
                         <S.FileInputBox>
-                            <S.FileInput placeholder="파일을 선택해주세요"/>
+                            <S.FileInput placeholder="파일을 선택해주세요" value={fileName}/>
                             <S.FileLabelBox>
                                 <S.FileLabel for="fileInput">파일선택</S.FileLabel>
                             </S.FileLabelBox>
-                            <S.FileInputBtn id="fileInput" type="file"/>
+                            <S.FileInputBtn id="fileInput" type="file" onChange={(e)=>{ChooseFileEvent(e)}}/>
                         </S.FileInputBox>
 
                     </S.InputBox>

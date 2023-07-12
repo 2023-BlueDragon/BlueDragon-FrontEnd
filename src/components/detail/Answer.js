@@ -1,22 +1,33 @@
 import styled from "styled-components"
 import UserImg from "../../asset/profile.svg"
+import { useEffect, useState } from "react"
+import API from "../../utils/API"
 
-const Answer = () => {
+const Answer = ({detailId,answers}) => {
+    const [answersData, setAnswersData] = useState(answers)
+
     return(
-        <AnswerLayout>
-            <ContentBox>
-                <WriterInfo>
-                    <WriterImg src={UserImg}/>
-                    <WriterName>김조류</WriterName>
-                </WriterInfo>
+        <>
+        {
+            answersData.map((item)=>(
+                <AnswerLayout>
+                    <ContentBox>
+                        <WriterInfo>
+                            <WriterImg src={UserImg}/>
+                            <WriterName>{item.writer.nickName}</WriterName>
+                        </WriterInfo>
+        
+                        <ContentText>{item.answer}</ContentText>
+                        <ContentImg src={item.fileUrlList[0]}/> 
+                        <WriteTime>{item.createdAt}</WriteTime>
 
-                <ContentText>
-                일단 새가 그런 행동을 할만한 이유를 설명해드리자면.. <br/>첫번째로는 사춘기, 두번째로는 털갈이가 있습니다
-                </ContentText>
-                <WriteTime>2023. 07. 13</WriteTime>
+        
+                    </ContentBox>
+                </AnswerLayout>
+            ))
+        }
+        </>
 
-            </ContentBox>
-        </AnswerLayout>
     )
 }
 
@@ -26,7 +37,6 @@ const AnswerLayout = styled.div`
     margin-top: 1.8rem;
 
     width: 100%;
-    height: 24.9375rem;
 
     border-radius: 0.3125rem 0.3125rem 0rem 0rem;
     background: #FFF;
@@ -68,6 +78,11 @@ const WriteTime = styled.div`
     margin-top: 2.5rem;
 
     color: #989898;
-    font-size: 0.625rem;
+    font-size: 1rem;
     font-weight: 300;
+`
+
+const ContentImg = styled.img`
+    width: 50rem;
+
 `

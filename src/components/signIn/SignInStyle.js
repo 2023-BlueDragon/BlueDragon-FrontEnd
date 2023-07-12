@@ -35,7 +35,7 @@ export const InputLabel = styled.p`
 `
 
 export const Input = styled.input`
-    width: calc(100% - 1.25rem);
+    width: 100%;
     height: 4.375rem;
 
     border-radius: 15px;
@@ -67,6 +67,8 @@ export const SubmitBtn = styled.button`
 `
 
 export const DirectionBox = styled.div`
+    margin-top: 0.6rem;
+
     display: flex;
 
 `
@@ -77,10 +79,14 @@ export const isAccountLabel = styled.p`
 `
 
 export const SignUpBtn = styled.button`
+    margin-left: 0.6rem;
+
     border: none;
     background-color: #fff;
     color: #2D47E5;
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration-line: underline;
+
+    cursor: pointer;
 `
